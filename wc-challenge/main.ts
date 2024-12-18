@@ -2,40 +2,17 @@ import { createLogger } from "rslog";
 
 const logger = createLogger({});
 
-logger.override({
-  success: (message) => {
-    console.log(message);
-  },
-  debug: (message) => {
-    console.log(message);
-  },
-  ready: (message) => {
-    console.log(message);
-  },
-  start: (message) => {
-    console.log(message);
-  },
-  log: (message) => {
-    console.log(message);
-  },
-  info: (message) => {
-    console.log(message);
-  },
-  warn: (message) => {
-    console.log(message);
-  },
-  error: (message) => {
-    console.log(message);
-  },
-});
-
 async function wc() {
   const option = Deno.args[0];
   const filePath = Deno.args[1];
   try {
-    const isFile = await Deno.realPath(filePath);
-    const stats = await Deno.stat(isFile);
-    if (option === "-c") {
+    if (!option || !filePath) {
+      logger.error("Unknown flags [OPTIONS] [FILE_PATH]");
+      return null;
+    }
+    if (option === "-c" && filePath) {
+      const isFile = await Deno.realPath(filePath);
+      const stats = await Deno.stat(isFile);
       logger.info(`${stats.size} ${filePath}`);
     } else {
       logger.warn(`Unknown flag ${option}`);
